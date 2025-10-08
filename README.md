@@ -99,10 +99,10 @@ Changes are reflected immediately in the table.
 
 ```bash
 # To remove all resources from your cluster:
-kubectl delete -f spring-deployment.yaml
-kubectl delete -f spring-service.yaml
-kubectl delete -f react-deployment.yaml
-kubectl delete -f react-service.yaml
+kubectl delete -f K8s/spring-deployment.yaml
+kubectl delete -f K8s/spring-service.yaml
+kubectl delete -f K8s/react-deployment.yaml
+kubectl delete -f K8s/react-service.yaml
 
 # Verify:
 kubectl get all
