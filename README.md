@@ -20,7 +20,7 @@ Before running this project, ensure you have:
 ### 2. Build the containers
 
 #### Backend
-From the project root `demo/`:
+From the project root:
 
 ```bash
 # Build the JAR
@@ -31,7 +31,7 @@ docker build -t <your-dockerhub-username>/spring-microservice:3.0.2 .
 ```
 
 #### Frontend
-From `demo/frontend/`:
+From `frontend/`:
 
 ```bash
 # Install dependencies
@@ -55,7 +55,7 @@ docker push <your-dockerhub-username>/react-frontend:2.0.0
 
 ### 4. Deploy to Kubernetes
 
-From `demo/`:
+From project root:
 
 ```bash
 # Deploy the manifests
