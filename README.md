@@ -1,4 +1,4 @@
-# my-spring-container
+# Spring-Microservice-with-K8s
 
 ## Purpose
 This project is a full-stack application consisting of a **Spring Boot microservice backend** and a **React frontend**. The two services are containerized with **Docker** and deployed together on a local **Kubernetes cluster** (via Docker Desktop).
