@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: spring-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: spring
@@ -14,6 +14,9 @@ spec:
     spec:
       containers:
         - name: spring
-          image: kmwalsh211/spring-microservice:3.0.2
+          image: kmwalsh211/spring-microservice:4.0.1
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: my-config   # Step 5 - inject ConfigMap as env vars

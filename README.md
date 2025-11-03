@@ -27,7 +27,7 @@ From the project root `demo/`:
 ./gradlew clean bootJar
 
 # Build the Docker image
-docker build -t <your-dockerhub-username>/spring-microservice:3.0.2 .
+docker build -t <your-dockerhub-username>/spring-microservice:4.0.1 .
 ```
 
 #### Frontend
@@ -41,7 +41,7 @@ npm install
 npm run build
 
 # Build the Docker image
-docker build -t <your-dockerhub-username>/react-frontend:2.0.0 .
+docker build -t <your-dockerhub-username>/react-frontend:3.0.0 .
 ```
 
 ### 3. Push to DockerHub
@@ -49,7 +49,7 @@ docker build -t <your-dockerhub-username>/react-frontend:2.0.0 .
 ```bash
 docker login
 
-docker push <your-dockerhub-username>/spring-microservice:3.0.2
+docker push <your-dockerhub-username>/spring-microservice:4.0.1
 docker push <your-dockerhub-username>/react-frontend:2.0.0
 ```
 
@@ -99,10 +99,10 @@ Changes are reflected immediately in the table.
 
 ```bash
 # To remove all resources from your cluster:
-kubectl delete -f spring-deployment.yaml
-kubectl delete -f spring-service.yaml
-kubectl delete -f react-deployment.yaml
-kubectl delete -f react-service.yaml
+kubectl delete -f K8s/spring-deployment.yaml
+kubectl delete -f K8s/spring-service.yaml
+kubectl delete -f K8s/react-deployment.yaml
+kubectl delete -f K8s/react-service.yaml
 
 # Verify:
 kubectl get all
@@ -114,6 +114,6 @@ You should no longer see the deployments or services.
 
 ## Notes
 
-- Since the backend uses in-memory storage, scaling Spring Boot to multiple replicas (replicas: 2) will result in inconsistent state between pods. For this demo, keep replicas at 1.
+- Since the backend uses in-memory storage, scaling Spring Boot to multiple replicas results in inconsistent state between pods. 3 replicas were required so I kept it as that, but it means the movie list is inconsistent on the UI since each pod has a separate memory.
 
 - In production, this would be solved by connecting Spring Boot to a persistent database (Postgres, MySQL, etc.).

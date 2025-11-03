@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: react
-          image: kmwalsh211/react-frontend:2.0.0
+          image: kmwalsh211/react-frontend:3.0.0
           ports:
             - containerPort: 80

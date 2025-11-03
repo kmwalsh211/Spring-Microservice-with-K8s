@@ -9,11 +9,39 @@ function App() {
     const [editTitle, setEditTitle] = useState("");
     const [editYear, setEditYear] = useState("");
     const [error, setError] = useState("");
+    const [config, setConfig] = useState({});
+    const [fibLength, setFibLength] = useState("");
+    const [fibResult, setFibResult] = useState([]);
+    const [fibError, setFibError] = useState("");
+
+
 
     // Load all movies on start
     useEffect(() => {
         fetchMovies();
+        fetchConfig();
     }, []);
+
+    const fetchConfig = () => {
+        axios.get("/api/config")
+            .then((res) => setConfig(res.data))
+            .catch((err) => console.error(err));
+    };
+
+    const fetchFib = (e) => {
+        e.preventDefault();
+        setFibError("");
+
+        axios.get(`/api/fib`, { params: { length: fibLength }})
+            .then((res) => {
+                setFibResult(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+                setFibError("Error fetching Fibonacci sequence");
+            });
+    };
+
 
     const fetchMovies = () => {
         axios
@@ -44,7 +72,7 @@ function App() {
 
     const deleteMovie = (id) => {
         axios
-            .delete("/api/deleteMovieById", { params: { id } })
+            .delete("/api/deleteMovieById", {params: {id}})
             .then(() => fetchMovies())
             .catch((err) => console.error(err));
     };
@@ -59,11 +87,11 @@ function App() {
         e.preventDefault();
         axios
             .put("/api/updateTitleById", null, {
-                params: { id: editId, title: editTitle },
+                params: {id: editId, title: editTitle},
             })
             .then(() =>
                 axios.put("/api/updateYearById", null, {
-                    params: { id: editId, year: parseInt(editYear) },
+                    params: {id: editId, year: parseInt(editYear)},
                 })
             )
             .then(() => {
@@ -76,11 +104,11 @@ function App() {
     };
 
     return (
-        <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-            <h1>🎬 Movie Database</h1>
+        <div style={{padding: "2rem", fontFamily: "Arial, sans-serif"}}>
+            <h1>Movie Database</h1>
 
             {/* Add Movie */}
-            <form onSubmit={addMovie} style={{ marginBottom: "2rem" }}>
+            <form onSubmit={addMovie} style={{marginBottom: "2rem"}}>
                 <h2>Add Movie</h2>
                 <input
                     type="text"
@@ -88,7 +116,7 @@ function App() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
-                    style={{ marginRight: "1rem" }}
+                    style={{marginRight: "1rem"}}
                 />
                 <input
                     type="number"
@@ -96,33 +124,33 @@ function App() {
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
                     required
-                    style={{ marginRight: "1rem" }}
+                    style={{marginRight: "1rem"}}
                 />
                 <button type="submit">Add</button>
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {error && <p style={{color: "red"}}>{error}</p>}
             </form>
 
             {/* Edit Movie */}
             {editId && (
-                <form onSubmit={updateMovie} style={{ marginBottom: "2rem" }}>
+                <form onSubmit={updateMovie} style={{marginBottom: "2rem"}}>
                     <h2>Edit Movie ID: {editId}</h2>
                     <input
                         type="text"
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
-                        style={{ marginRight: "1rem" }}
+                        style={{marginRight: "1rem"}}
                     />
                     <input
                         type="number"
                         value={editYear}
                         onChange={(e) => setEditYear(e.target.value)}
-                        style={{ marginRight: "1rem" }}
+                        style={{marginRight: "1rem"}}
                     />
                     <button type="submit">Update</button>
                     <button
                         type="button"
                         onClick={() => setEditId(null)}
-                        style={{ marginLeft: "1rem" }}
+                        style={{marginLeft: "1rem"}}
                     >
                         Cancel
                     </button>
@@ -137,7 +165,7 @@ function App() {
                 <table
                     border="1"
                     cellPadding="10"
-                    style={{ borderCollapse: "collapse", width: "100%" }}
+                    style={{borderCollapse: "collapse", width: "100%"}}
                 >
                     <thead>
                     <tr>
@@ -157,7 +185,7 @@ function App() {
                                 <button onClick={() => deleteMovie(movie.id)}>Delete</button>
                                 <button
                                     onClick={() => startEdit(movie)}
-                                    style={{ marginLeft: "1rem" }}
+                                    style={{marginLeft: "1rem"}}
                                 >
                                     Edit
                                 </button>
@@ -167,8 +195,47 @@ function App() {
                     </tbody>
                 </table>
             )}
+
+            {/* Fibonacci Section */}
+            <div style={{ marginTop: "3rem" }}>
+                <h2>Fibonacci Generator</h2>
+
+                <form onSubmit={fetchFib}>
+                    <input
+                        type="number"
+                        placeholder="Sequence length"
+                        value={fibLength}
+                        onChange={(e) => setFibLength(e.target.value)}
+                        required
+                        style={{ marginRight: "1rem" }}
+                    />
+                    <button type="submit">Generate</button>
+                </form>
+
+                {fibError && <p style={{ color: "red" }}>{fibError}</p>}
+
+                {fibResult.length > 0 && (
+                    <p>
+                        Fibonacci Result: <strong>[{fibResult.join(", ")}]</strong>
+                    </p>
+                )}
+            </div>
+
+            {/* NEW CONFIG SECTION */}
+            <h2 style={{marginTop: "2rem"}}>Environment Config</h2>
+            {Object.keys(config).length === 0 ? (
+                <p>No config loaded.</p>
+            ) : (
+                <ul>
+                    {Object.entries(config).map(([key, value]) => (
+                        <li key={key}>
+                            <strong>{key}</strong>: {value}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }
 
-export default App;
+    export default App;
