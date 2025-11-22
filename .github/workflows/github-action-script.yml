@@ -12,13 +12,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build the backend container image
-        run:
+        run: |
           ./gradlew clean bootJar
           docker build -t spring-microservice:4.0.1 .
 
       - name: Build the frontend container image
         working-directory: frontend
-        run:
+        run: |
           npm install
           npm run build
           docker build -t react-frontend:3.0.0 .
@@ -27,13 +27,13 @@ jobs:
         run: docker network create demo-net
 
       - name: Run container images
-        run: 
+        run: |
           docker run -d --network demo-net --name spring-service -p 8080:8080 spring-microservice:4.0.1
           docker run -d --network demo-net --name react-frontend -p 3000:80 react-frontend:3.0.0
           sleep 5
 
       - name: Verify /fib works
-        run: 
+        run: |
           response=$(curl "http://localhost:8080/api/fib?length=10")
 
           if [ "$response" == "[0,1,1,2,3,5,8,13,21,34]" ]
@@ -44,7 +44,7 @@ jobs:
           fi
           
       - name: Cleanup
-        run: 
+        run: |
           docker stop spring-service
           docker stop react-frontend
           docker rm spring-service
