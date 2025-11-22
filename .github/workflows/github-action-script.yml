@@ -1,0 +1,52 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the backend container image
+        run:
+          ./gradlew clean bootJar
+          docker build -t spring-microservice:4.0.1 .
+
+      - name: Build the frontend container image
+        working-directory: frontend
+        run:
+          npm install
+          npm run build
+          docker build -t react-frontend:3.0.0 .
+
+      - name: Create docker network (these two cant run together outside of kubernetes with their current config)
+        run: docker network create demo-net
+
+      - name: Run container images
+        run: 
+          docker run -d --network demo-net --name spring-service -p 8080:8080 spring-microservice:4.0.1
+          docker run -d --network demo-net --name react-frontend -p 3000:80 react-frontend:3.0.0
+          sleep 5
+
+      - name: Verify /fib works
+        run: 
+          response=$(curl "http://localhost:8080/api/fib?length=10")
+
+          if [ "$response" == "[0,1,1,2,3,5,8,13,21,34]" ]
+            echo "Test passed!"
+          else
+            echo "Test failed. Expected "[0,1,1,2,3,5,8,13,21,34]", got '$response'"
+            exit 1
+          fi
+          
+      - name: Cleanup
+        run: 
+          docker stop spring-service
+          docker stop react-frontend
+          docker rm spring-service
+          docker rm react-frontend
+          docker network rm demo-net
